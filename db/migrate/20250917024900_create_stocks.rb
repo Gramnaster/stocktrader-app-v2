@@ -2,6 +2,7 @@ class CreateStocks < ActiveRecord::Migration[8.0]
   def change
     create_table :stocks do |t|
       t.references :country, null: false, foreign_key: true
+      t.string :currency,               null: false
       t.string :exchange
       t.string :ticker,                 null: false
       t.string :name,                   null: false

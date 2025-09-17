@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_17_031524) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_17_070615) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -70,6 +70,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_17_031524) do
     t.decimal "percent_daily_change", precision: 15, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "currency", null: false
     t.index ["country_id"], name: "index_stocks_on_country_id"
     t.index ["ticker"], name: "index_stocks_on_ticker", unique: true
   end
