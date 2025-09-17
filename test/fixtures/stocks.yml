@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  country: one
+  exchange: MyString
+  ticker: MyString
+  name: MyString
+  web_url: MyString
+  logo_url: MyString
+  current_price: 9.99
+  daily_change: 9.99
+  percent_daily_change: 9.99
+
+two:
+  country: two
+  exchange: MyString
+  ticker: MyString
+  name: MyString
+  web_url: MyString
+  logo_url: MyString
+  current_price: 9.99
+  daily_change: 9.99
+  percent_daily_change: 9.99

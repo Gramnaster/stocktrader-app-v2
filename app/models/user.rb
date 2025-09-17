@@ -17,7 +17,12 @@ class User < ApplicationRecord
 
   belongs_to :country
   validates :country, presence: true
-  # validates :balance, numericality: { greater_than_or_equal_to: 0 }
+
   has_one :wallet, dependent: :destroy
   validates :wallet, presence: true
+
+  has_many :portfolios, dependent: :destroy
+  has_many :stocks, through: :portfolios
+  has_many :transactions, dependent: :destroy
+  has_many :stock_reviews, dependent: :destroy
 end

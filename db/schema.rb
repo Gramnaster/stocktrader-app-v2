@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_16_065232) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_17_031524) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "transaction_type", ["buy", "sell"]
   create_enum "user_role", ["trader", "admin"]
   create_enum "user_status", ["pending", "approved", "rejected"]
 
@@ -24,6 +25,66 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_065232) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "historical_prices", force: :cascade do |t|
+    t.bigint "stock_id", null: false
+    t.date "date", null: false
+    t.decimal "previous_close", precision: 15, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["stock_id", "date"], name: "index_historical_prices_on_stock_id_and_date", unique: true
+    t.index ["stock_id"], name: "index_historical_prices_on_stock_id"
+  end
+
+  create_table "portfolios", id: false, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "stock_id", null: false
+    t.decimal "quantity", precision: 15, scale: 5, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["stock_id"], name: "index_portfolios_on_stock_id"
+    t.index ["user_id"], name: "index_portfolios_on_user_id"
+  end
+
+  create_table "stock_reviews", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "stock_id", null: false
+    t.boolean "vote", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["stock_id"], name: "index_stock_reviews_on_stock_id"
+    t.index ["user_id", "stock_id"], name: "index_stock_reviews_on_user_id_and_stock_id", unique: true
+    t.index ["user_id"], name: "index_stock_reviews_on_user_id"
+  end
+
+  create_table "stocks", force: :cascade do |t|
+    t.bigint "country_id", null: false
+    t.string "exchange"
+    t.string "ticker", null: false
+    t.string "name", null: false
+    t.string "web_url"
+    t.string "logo_url"
+    t.decimal "current_price", precision: 15, scale: 2
+    t.decimal "daily_change", precision: 15, scale: 2
+    t.decimal "percent_daily_change", precision: 15, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_stocks_on_country_id"
+    t.index ["ticker"], name: "index_stocks_on_ticker", unique: true
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "stock_id", null: false
+    t.enum "transaction_type", null: false, enum_type: "transaction_type"
+    t.decimal "quantity", precision: 15, scale: 5, null: false
+    t.decimal "price_per_share", precision: 15, scale: 2, null: false
+    t.decimal "total_amount", precision: 15, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["stock_id"], name: "index_transactions_on_stock_id"
+    t.index ["user_id"], name: "index_transactions_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -68,6 +129,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_065232) do
     t.index ["user_id"], name: "index_wallets_on_user_id"
   end
 
+  add_foreign_key "historical_prices", "stocks"
+  add_foreign_key "portfolios", "stocks"
+  add_foreign_key "portfolios", "users"
+  add_foreign_key "stock_reviews", "stocks"
+  add_foreign_key "stock_reviews", "users"
+  add_foreign_key "stocks", "countries"
+  add_foreign_key "transactions", "stocks"
+  add_foreign_key "transactions", "users"
   add_foreign_key "users", "countries"
   add_foreign_key "wallets", "users"
 end
