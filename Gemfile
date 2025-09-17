@@ -14,6 +14,7 @@ gem "devise-jwt"
 gem "dotenv-rails"
 gem "finnhub_ruby", "~> 2.0.0"
 gem "acts_as_paranoid", "~> 0.10.3"
+gem "rack-cors"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
