@@ -8,73 +8,34 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-NASDAQ_100_TICKERS = [
-  'AAPL', 'MSFT', 'AMZN', 'NVDA', 'GOOGL', 'GOOG', 'TSLA', 'META', 'AVGO', 'PEP',
-  'COST', 'ADBE', 'CSCO', 'TMUS', 'NFLX', 'AMD', 'CMCSA', 'INTC', 'TXN', 'QCOM',
-  'HON', 'AMGN', 'INTU', 'SBUX', 'GILD', 'MDLZ', 'ISRG', 'ADP', 'PYPL', 'BKNG',
-  'ADI', 'REGN', 'VRTX', 'FISV', 'LRCX', 'MU', 'CSX', 'ATVI', 'AMAT', 'MNST',
-  'KDP', 'PANW', 'ORLY', 'MAR', 'CTAS', 'AEP', 'FTNT', 'CDNS', 'CHTR', 'SNPS',
-  'KLAC', 'EXC', 'PAYX', 'PCAR', 'DXCM', 'MCHP', 'ROP', 'XEL', 'CTSH', 'ADSK',
-  'EA', 'BIIB', 'LULU', 'WBA', 'KHC', 'MELI', 'IDXX', 'ROST', 'EBAY', 'WBD',
-  'FAST', 'CRWD', 'ODFL', 'CSGP', 'CPRT', 'DDOG', 'VRSK', 'CEG', 'GEHC', 'ANSS',
-  'SIRI', 'DLTR', 'MRVL', 'TEAM', 'AZN', 'BKR', 'ILMN', 'MRNA', 'ALGN', 'ZS',
-  'ON', 'EXPD', 'TTD', 'PCG', 'DASH', 'SGEN', 'ENPH', 'GEN', 'FANG', 'ZBRA'
-]
+require 'finnhub_ruby'
 
-puts "Seeding stocks..."
 
-# Create a new instance of the Finnhub API client.
-# This will work because your initializer has already run.
-client = FinnhubRuby::DefaultApi.new
+puts "Seeding country data from Finnhub..."
 
-# --- Pre-fetch the USA Country record ---
-# This is more efficient than finding it inside the loop every time.
-# This assumes you have already seeded your countries table.
-usa = Country.find_by(code: 'US')
-unless usa
-  puts "Error: Could not find Country with code 'US'. Please seed countries first."
-  exit # Stop the seed process if the dependency is not met.
-end
-
-NASDAQ_100_TICKERS.each do |ticker|
-  # --- Idempotency Check: Skip if the stock already exists ---
-  if Stock.exists?(ticker: ticker)
-    puts "Skipping #{ticker}, it already exists in the database."
-    next
-  end
-
+ActiveRecord::Base.transaction do
   begin
-    # --- Step 1: Call the /company-profile2 endpoint for static data ---
-    profile = client.company_profile2(symbol: ticker)
+    client = FinnhubRuby::DefaultApi.new
 
-    # The free Finnhub API can sometimes return a nil profile. We must check for this.
-    if profile.nil? || profile.name.blank?
-      puts "Warning: Could not fetch a valid profile for #{ticker}. Skipping."
-      next
+    puts "Fetching countries list"
+    countries_data = client.country
+
+    puts "Populating countries table"
+    countries_data.each do |country_data|
+      country_code = country_data['code2']
+      Country.find_or_create_by!(code: country_code) do |country|
+        country.name = country_data['country']
+        puts "  -> Created country: #{country.name} (#{country.code})"
+      end
     end
-
-    # --- Step 2: Create the stock record in your database ---
-    # We are intentionally leaving the price columns (current_price, etc.) nil.
-    # The background job will populate these later.
-    Stock.create!(
-      ticker:        profile.ticker,
-      name:          profile.name,
-      logo_url:      profile.logo,
-      web_url:       profile.weburl,
-      exchange:      profile.exchange,
-      country:       usa # Associate the stock with the pre-fetched USA country record
-    )
-
-    puts "Successfully seeded #{profile.name} (#{ticker})"
-
-    # --- IMPORTANT: Add a small delay to respect the free API's rate limit ---
-    # The free tier is 60 calls/minute. A 1.1-second delay keeps you safely under.
-    sleep(1.1)
+    puts "Countries table populated successfully."
 
   rescue FinnhubRuby::ApiError => e
-    puts "Error seeding #{ticker}: #{e.message}. Skipping."
-    next
+    puts "Failed to fetch country data. Aborting seed. Error: #{e.message}"
+    raise ActiveRecord::Rollback
+
+  rescue => e
+    puts "Error: #{e.message}"
+    raise ActiveRecord::Rollback
   end
 end
-
-puts "Finished seeding stocks."

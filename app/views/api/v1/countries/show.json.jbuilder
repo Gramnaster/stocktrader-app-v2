@@ -1,0 +1,4 @@
+# json.extract! @country, :id, :code, :name
+json.id @country.id
+json.code @country.code
+json.name @country.name
