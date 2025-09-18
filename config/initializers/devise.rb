@@ -40,6 +40,17 @@ Devise.setup do |config|
 
   config.jwt do |jwt|
     jwt.secret = ENV["DEVISE_JWT_SECRET_KEY"]
+
+    jwt.dispatch_requests = [
+      [ "POST", %r{^/api/v1/user/login$} ],
+      [ "POST", %r{^/api/v1/user/signup$} ]
+    ]
+    jwt.revocation_requests = [
+      [ "DELETE", %r{^/api/v1/user/logout$} ]
+    ]
+
+    # Set the token expiration time.
+    jwt.expiration_time = 7.days.to_i
   end
 
   # ==> Configuration for any authentication mechanism
@@ -101,7 +112,7 @@ Devise.setup do |config|
   # Notice that if you are skipping storage for all authentication paths, you
   # may want to disable generating routes to Devise's sessions controller by
   # passing skip: :sessions to `devise_for` in your config/routes.rb
-  config.skip_session_storage = [ :http_auth ]
+  config.skip_session_storage = [ :http_auth, :params_auth ]
 
   # By default, Devise cleans up the CSRF token on authentication to
   # avoid CSRF token fixation attacks. This means that, when using AJAX

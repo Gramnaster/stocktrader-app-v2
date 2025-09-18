@@ -1,9 +1,12 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  include Devise::JWT::RevocationStrategies::JTIMatcher
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
-         :confirmable, :timeoutable
+         :confirmable, :timeoutable,
+         :jwt_authenticatable, jwt_revocation_strategy: self
 
   enum :user_status, { pending: "pending", approved: "approved", rejected: "rejected" }
   enum :user_role, { trader: "trader", admin: "admin" }
