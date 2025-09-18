@@ -4,6 +4,26 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
+  respond_to :json
+
+  # Override the default Devise create action
+  def create
+    build_resource(sign_up_params)
+
+    resource.save
+    if resource.persisted?
+      # If the user was saved, let Rails render the view at:
+      # app/views/api/v1/users/registrations/create.json.jbuilder
+      # The JWT will be in the response headers automatically.
+      render :create, status: :created
+    else
+      # If saving failed, render the errors as JSON.
+      render json: {
+        status: { message: "User couldn't be created successfully. #{resource.errors.full_messages.to_sentence}" }
+      }, status: :unprocessable_entity
+    end
+  end
+
   # GET /resource/sign_up
   # def new
   #   super

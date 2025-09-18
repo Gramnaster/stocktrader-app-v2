@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     end
   end
 
-  devise_for :users, path: "api/v1", path_names: {
+  devise_for :users, path: "api/v1/users", path_names: {
     sign_in: "login",
     sign_out: "logout",
     registration: "signup"
