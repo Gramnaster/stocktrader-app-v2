@@ -271,7 +271,6 @@ GEM
       redis-client (>= 0.22.0)
     redis-client (0.25.3)
       connection_pool
-    redis-rails (0.0.0)
     regexp_parser (2.11.3)
     reline (0.6.2)
       io-console (~> 0.5)
@@ -401,7 +400,6 @@ DEPENDENCIES
   rails (~> 8.0.2, >= 8.0.2.1)
   rails-controller-testing
   redis
-  redis-rails
   rspec-rails
   rubocop-rails-omakase
   solid_cable

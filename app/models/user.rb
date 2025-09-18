@@ -22,7 +22,6 @@ class User < ApplicationRecord
   validates :country, presence: true
 
   has_one :wallet, dependent: :destroy
-  validates :wallet, presence: true
 
   has_many :portfolios, dependent: :destroy
   has_many :stocks, through: :portfolios

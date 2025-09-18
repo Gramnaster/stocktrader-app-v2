@@ -20,7 +20,7 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
       # If saving failed, render the errors as JSON.
       render json: {
         status: { message: "User couldn't be created successfully. #{resource.errors.full_messages.to_sentence}" }
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
   end
 

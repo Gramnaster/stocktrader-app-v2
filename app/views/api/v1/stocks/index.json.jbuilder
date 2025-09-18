@@ -9,4 +9,5 @@ json.array! @stocks do |stock|
   json.current_price stock.current_price
   json.daily_change stock.daily_change
   json.percent_daily_change stock.percent_daily_change
+  json.updated_at stock.updated_at
 end

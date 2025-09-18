@@ -14,4 +14,5 @@ class ApplicationController < ActionController::API
     # You can also permit parameters for updating an account (:account_update)
     # devise_parameter_sanitizer.permit(:account_update, keys: [:first_name, ...])
   end
+  config.cache_store = :redis_cache_store, { url: ENV.fetch("REDIS_URL") { "redis://localhost:6379/0" } }
 end
