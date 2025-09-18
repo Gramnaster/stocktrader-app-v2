@@ -7,10 +7,6 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      devise_for :users, controllers: {
-        sessions: "users/sessions",
-        registrations: "users/registrations"
-      }
       resources :stocks, only: [ :index, :show ]
       resources :countries, only: [ :index, :show ]
       resources :wallets, only: [ :index, :show ]
@@ -20,6 +16,16 @@ Rails.application.routes.draw do
       resources :stock_reviews, only: [ :index, :show ]
     end
   end
+
+  devise_for :users, path: "api/v1", path_names: {
+    sign_in: "login",
+    sign_out: "logout",
+    registration: "signup"
+  },
+  controllers: {
+    sessions: "api/v1/users/sessions",
+    registrations: "api/v1/users/registrations"
+  }
 
   # Defines the root path route ("/")
   # root "posts#index"
