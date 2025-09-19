@@ -12,12 +12,12 @@ development:
   update_stock_prices:
     class: UpdateStockPricesJob
     queue: default
-    schedule: every 5 minutes
+    schedule: every 2 minutes
   update_daily_closing_prices_job:
     class: UpdateDailyClosingPricesJob
     queue: default
-    # schedule: "0 5 * * *"
-    schedule: every 2 minutes
+    schedule: "0 5 * * *"
+    # schedule: every 2 minutes
 
 production:
   clear_solid_queue_finished_jobs:
