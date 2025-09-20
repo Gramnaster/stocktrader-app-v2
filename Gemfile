@@ -39,7 +39,7 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 1.2"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 # gem "rack-cors"
@@ -55,4 +55,6 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
   gem "rails-controller-testing"
   gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem 'faker'
 end
