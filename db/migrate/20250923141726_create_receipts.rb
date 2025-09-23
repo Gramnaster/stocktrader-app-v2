@@ -1,10 +1,10 @@
-class CreateTransactions < ActiveRecord::Migration[8.0]
+class CreateReceipts < ActiveRecord::Migration[8.0]
   def up
     execute <<-SQL
-      CREATE TYPE IF NOT EXISTS transaction_type AS ENUM ('buy', 'sell');
+      CREATE TYPE transaction_type AS ENUM ('buy', 'sell');
     SQL
 
-    create_table :transactions do |t|
+    create_table :receipts do |t|
       t.references :user, null: false, foreign_key: true
       t.references :stock, null: false, foreign_key: true
 
@@ -22,13 +22,7 @@ class CreateTransactions < ActiveRecord::Migration[8.0]
     drop_table :transaction
 
     execute <<-SQL
-      DO $$
-      BEGIN
-        IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'transaction_type') THEN
-          DROP TYPE transaction_type;
-        END IF;
-      END
-      $$;
+      DROP TYPE transaction_type
     SQL
   end
 end

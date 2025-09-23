@@ -28,7 +28,8 @@
 
   has_many :portfolios, dependent: :destroy
   has_many :stocks, through: :portfolios
-  has_many :transactions, dependent: :destroy
+  # has_many :transactions, dependent: :destroy
+  has_many :receipts, dependent: :destroy
   has_many :stock_reviews, dependent: :destroy
 
   private

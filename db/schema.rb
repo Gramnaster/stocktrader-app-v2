@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_18_032443) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_23_141726) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -45,6 +45,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_032443) do
     t.datetime "updated_at", null: false
     t.index ["stock_id"], name: "index_portfolios_on_stock_id"
     t.index ["user_id"], name: "index_portfolios_on_user_id"
+  end
+
+  create_table "receipts", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "stock_id", null: false
+    t.enum "transaction_type", null: false, enum_type: "transaction_type"
+    t.decimal "quantity", precision: 15, scale: 5, null: false
+    t.decimal "price_per_share", precision: 15, scale: 2, null: false
+    t.decimal "total_amount", precision: 15, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["stock_id"], name: "index_receipts_on_stock_id"
+    t.index ["user_id"], name: "index_receipts_on_user_id"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -196,19 +209,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_032443) do
     t.index ["ticker"], name: "index_stocks_on_ticker", unique: true
   end
 
-  create_table "transactions", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "stock_id", null: false
-    t.enum "transaction_type", null: false, enum_type: "transaction_type"
-    t.decimal "quantity", precision: 15, scale: 5, null: false
-    t.decimal "price_per_share", precision: 15, scale: 2, null: false
-    t.decimal "total_amount", precision: 15, scale: 2, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["stock_id"], name: "index_transactions_on_stock_id"
-    t.index ["user_id"], name: "index_transactions_on_user_id"
-  end
-
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -256,6 +256,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_032443) do
   add_foreign_key "historical_prices", "stocks"
   add_foreign_key "portfolios", "stocks"
   add_foreign_key "portfolios", "users"
+  add_foreign_key "receipts", "stocks"
+  add_foreign_key "receipts", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
@@ -265,8 +267,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_032443) do
   add_foreign_key "stock_reviews", "stocks"
   add_foreign_key "stock_reviews", "users"
   add_foreign_key "stocks", "countries"
-  add_foreign_key "transactions", "stocks"
-  add_foreign_key "transactions", "users"
   add_foreign_key "users", "countries"
   add_foreign_key "wallets", "users"
 end

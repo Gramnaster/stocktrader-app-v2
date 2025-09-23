@@ -12,7 +12,8 @@ Rails.application.routes.draw do
       resources :wallets, only: [ :index, :show ]
       resources :historical_prices, only: [ :index, :show ]
       resources :portfolios, only: [ :index, :show ]
-      resources :transactions, only: [ :index, :show ]
+      # resources :transactions, only: [ :index, :show ]
+      resources :receipts, only: [ :index, :show ]
       resources :stock_reviews, only: [ :index, :show ]
     end
   end
