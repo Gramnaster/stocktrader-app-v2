@@ -16,8 +16,8 @@ development:
   update_daily_closing_prices_job:
     class: UpdateDailyClosingPricesJob
     queue: default
-    schedule: "0 5 * * *"
-    # schedule: every 2 minutes
+    schedule: "0 9 * * *"
+    # schedule: every 24 hours
 
 production:
   clear_solid_queue_finished_jobs:

@@ -34,7 +34,7 @@ class UpdateStockPricesJob < ApplicationJob
           daily_change:         quote["d"],
           percent_daily_change: quote["dp"]
         )
-      rescue FinnhubRuby::ApiError => e
+      rescue StandardError => e
         Rails.logger.error "Finnhub API error for #{stock.ticker}: #{e.message}"
         next
       end
