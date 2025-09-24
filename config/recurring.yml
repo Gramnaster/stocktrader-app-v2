@@ -18,6 +18,11 @@ development:
     queue: default
     schedule: "0 9 * * *"
     # schedule: every 24 hours
+  update_daily_market_cap_job:
+    class: UpdateDailyMarketCapJob
+    queue: default
+    schedule: "0 9 * * *"
+    # schedule: every 24 hours
 
 production:
   clear_solid_queue_finished_jobs:
