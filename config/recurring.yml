@@ -12,18 +12,17 @@ development:
   update_stock_prices:
     class: UpdateStockPricesJob
     queue: default
-    schedule: every 2 minutes
+    schedule: every 1.5 minutes
   update_daily_closing_prices_job:
     class: UpdateDailyClosingPricesJob
     queue: default
     schedule: "0 9 * * *"
-    # schedule: every 24 hours
+    # schedule: every 2 minutes
   update_daily_market_cap_job:
     class: UpdateDailyMarketCapJob
     queue: default
-    schedule: "0 9 * * *"
-    # schedule: every 24 hours
-
+    # schedule: "5 9 * * *"
+    schedule: every 5 minutes
 production:
   clear_solid_queue_finished_jobs:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"

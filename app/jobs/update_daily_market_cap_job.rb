@@ -1,4 +1,5 @@
 require "finnhub_ruby"
+# Use robust FinnhubClient with key rotation
 require "redis"
 
 class UpdateDailyMarketCapJob < ApplicationJob
@@ -10,20 +11,19 @@ class UpdateDailyMarketCapJob < ApplicationJob
     begin
       redis.set("update_daily_market_cap_job_running", true)
       puts "Starting update daily market cap job..."
-      client = FinnhubRuby::DefaultApi.new
 
       Stock.find_each do |stock|
         begin
-          company_profile = client.company_profile2(symbol: stock.ticker)
-
-          if company_profile && company_profile["marketCapitalization"]
-            market_cap = company_profile["marketCapitalization"] * 1_000_000
-            stock.update!(market_cap: market_cap)
-            puts "Successfully updated market cap for #{stock.ticker}: $#{(market_cap / 1_000_000_000).round(2)}B"
-          else
-            puts "No market cap data available for #{stock.ticker}"
+          FinnhubClient.try_request do |client|
+            company_profile = client.company_profile2(symbol: stock.ticker)
+            if company_profile && company_profile["marketCapitalization"]
+              market_cap = company_profile["marketCapitalization"] * 1_000_000
+              stock.update!(market_cap: market_cap)
+              puts "Successfully updated market cap for #{stock.ticker}: $#{(market_cap / 1_000_000_000).round(2)}B"
+            else
+              puts "No market cap data available for #{stock.ticker}"
+            end
           end
-
           sleep(1.1)
 
         rescue StandardError => e
