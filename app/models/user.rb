@@ -1,6 +1,4 @@
  class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   devise :database_authenticatable, :registerable,
@@ -11,7 +9,6 @@
   enum :user_status, { pending: "pending", approved: "approved", rejected: "rejected" }
   enum :user_role, { trader: "trader", admin: "admin" }
 
-  # Automatically create a wallet when a new user is created
   after_create :create_user_wallet
 
   validates :first_name, presence: true
