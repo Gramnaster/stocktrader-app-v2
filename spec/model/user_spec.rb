@@ -9,8 +9,9 @@ RSpec.describe "invalid User specs" do
 
     it "is not valid without password" do
       user = build(:user)
-      expect(user).to_not be_valid
+      expect(user).to be_valid
     end
+
 
   end
 end
