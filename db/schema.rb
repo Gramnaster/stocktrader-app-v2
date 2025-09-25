@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_24_172916) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_25_141907) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
-  create_enum "transaction_type", ["buy", "sell"]
+  create_enum "transaction_type", ["buy", "sell", "withdraw", "deposit"]
   create_enum "user_role", ["trader", "admin"]
   create_enum "user_status", ["pending", "approved", "rejected"]
 
