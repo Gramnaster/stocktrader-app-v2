@@ -19,7 +19,7 @@ class UpdateDailyClosingPricesJob < ApplicationJob
             price_record.update!(previous_close: quote["pc"])
             puts "Successfully saved closing price for #{stock.ticker} on #{target_date}"
           end
-          sleep(2)
+          sleep(0.5)
         end
     ensure
       redis.del("update_daily_closing_prices_job_running")
