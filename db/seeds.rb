@@ -43,6 +43,41 @@ ActiveRecord::Base.transaction do
   end
 end
 
+puts "Creating default admin user..."
+
+# Create default admin user (after countries are seeded)
+admin_email = ENV['ADMIN_EMAIL'] || 'admin@admin.com'
+admin_password = ENV['ADMIN_PASSWORD'] || 'admin123456'
+
+# Get the first country (or default to US)
+default_country = Country.find_by(code: 'US') || Country.first
+
+if default_country.nil?
+  puts "Error: No countries found in database. Please check Finnhub API connection."
+  exit 1
+end
+
+admin_user = User.find_or_create_by!(email: admin_email) do |user|
+  user.password = admin_password
+  user.password_confirmation = admin_password
+  user.first_name = 'System'
+  user.last_name = 'Administrator'
+  user.date_of_birth = 30.years.ago
+  user.mobile_no = '1234567890'
+  user.address_line_01 = '123 Admin Street'
+  user.city = 'Admin City'
+  user.zip_code = '12345'
+  user.country = default_country  # Use the Country object, not an integer
+  user.user_role = 'admin'
+  user.user_status = 'approved'
+  user.confirmed_at = Time.current  # Skip email confirmation
+  puts "  -> Created admin user: #{user.email} in #{default_country.name}"
+end
+
+if admin_user.persisted? && !admin_user.changed?
+  puts "  -> Admin user already exists: #{admin_user.email}"
+end
+
 # Seeding stocks
 
 NASDAQ_100_TICKERS = [
@@ -63,8 +98,6 @@ puts "Seeding stocks..."
 # Wrap the entire stock seeding process in a transaction for safety.
 ActiveRecord::Base.transaction do
   begin
-    client = FinnhubRuby::DefaultApi.new
-
     NASDAQ_100_TICKERS.each do |ticker|
       if Stock.exists?(ticker: ticker)
         puts "Skipping #{ticker}, it already exists in the database."
