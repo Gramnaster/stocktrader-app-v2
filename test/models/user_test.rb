@@ -5,11 +5,19 @@ class UserTest < ActiveSupport::TestCase
   #   assert true
   # end
 
-  RSpec.describe User, type: :model do
-    it "is invalid without email and " do
-      user = User.new (
-        email: 'avel@yahoo.com'
-      )
-      expect(user).not_to be_valid
-    end
+  test "user should be valid with required attributes" do
+    user = User.new(
+      email: "test@example.com",
+      password: "password123",
+      first_name: "Test",
+      last_name: "User",
+      date_of_birth: "1990-01-01",
+      mobile_no: "1234567890",
+      address_line_01: "123 Main St",
+      city: "Test City",
+      zip_code: "12345",
+      country: countries(:one)
+    )
+    assert user.valid?
+  end
 end
