@@ -14,10 +14,10 @@ puts "Seeding country data from Finnhub..."
 
 ActiveRecord::Base.transaction do
   begin
-    client = FinnhubRuby::DefaultApi.new
-
-    puts "Fetching countries list"
-    countries_data = client.country
+    countries_data = nil
+    FinnhubClient.try_request do |client|
+      countries_data = client.country
+    end
 
     puts "Populating countries table"
     countries_data.each do |country_data|
@@ -71,7 +71,10 @@ ActiveRecord::Base.transaction do
         next
       end
 
-      profile = client.company_profile2(symbol: ticker)
+      profile = nil
+      FinnhubClient.try_request do |client|
+        profile = client.company_profile2(symbol: ticker)
+      end
 
       if profile.nil? || profile['name'].blank?
         puts "Warning: Could not fetch a valid profile for #{ticker}. Skipping."
