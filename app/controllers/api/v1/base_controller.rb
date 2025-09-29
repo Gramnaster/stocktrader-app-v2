@@ -1,2 +1,3 @@
-class Api::V1::BaseController < ActionController::API
+class Api::V1::BaseController < ApplicationController
+  before_action :authenticate_user!
 end

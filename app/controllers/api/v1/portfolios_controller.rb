@@ -1,8 +1,27 @@
-class Api::V1::PortfoliosController < ApplicationController
-  before_action :authenticate_user!
+class Api::V1::PortfoliosController < Api::V1::BaseController
+  include AdminAuthorization
+  before_action :require_admin, only: [ :index ]
+  before_action :require_approved_user, only: [ :buy, :sell ]
 
   def index
+    @portfolios = Portfolio.all.includes(:user, :stock)
+    render json: @portfolios.as_json(
+      include: {
+        user: { only: [ :id, :email, :first_name, :last_name ] },
+        stock: { only: [ :id, :ticker, :company_name, :current_price ] }
+      },
+      methods: [ :current_market_value ]
+    )
+  end
+
+  def my_portfolios
     @portfolios = current_user.portfolios.includes(:stock)
+    render json: @portfolios.as_json(
+      include: {
+        stock: { only: [ :id, :ticker, :company_name, :current_price ] }
+      },
+      methods: [ :current_market_value ]
+    )
   end
 
   def show

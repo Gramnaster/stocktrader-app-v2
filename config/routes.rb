@@ -11,13 +11,18 @@ Rails.application.routes.draw do
       resources :countries, only: [ :index, :show ]
       resources :wallets, only: [ :index, :show ]
       resources :historical_prices, only: [ :index, :show ]
-      resources :portfolios, only: [ :show ] do
+      resources :portfolios, only: [ :index, :show ] do
+        get :my_portfolios, on: :collection
         post :buy, on: :collection
         post :sell, on: :collection
       end
-      # resources :transactions, only: [ :index, :show ]
       resources :receipts, only: [ :index, :show ]
       resources :stock_reviews, only: [ :index, :show ]
+      resources :users, only: [ :index, :show ] do
+        member do
+          patch :update_status
+        end
+      end
     end
   end
 
