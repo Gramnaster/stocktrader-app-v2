@@ -72,6 +72,12 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          # REDIS_URL: redis://localhost:6379/0
-        run: bundle exec rails db:test:prepare && bundle exec rspec
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/stock_trader_app_v2_test
+          POSTGRES_USERNAME: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_HOST: localhost
+        run: |
+          bundle exec rails db:environment:set RAILS_ENV=test
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+          bundle exec rspec
