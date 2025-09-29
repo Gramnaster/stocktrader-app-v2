@@ -25,16 +25,22 @@ class Api::V1::PortfoliosController < Api::V1::BaseController
   end
 
   def show
-    portfolio = Portfolio.find_by(user_id: current_user.id, stock_id: params[:stock_id])
-    if portfolio
-      render json: {
-        stock: portfolio.stock.ticker,
-        quantity: portfolio.quantity,
-        market_value: portfolio.current_market_value
-      }
-    else
-      render json: { error: "Portfolio not found" }, status: :not_found
+    # Find portfolio by ID and ensure it belongs to current user (unless admin)
+    @portfolio = Portfolio.find(params[:id])
+
+    unless current_user.admin? || @portfolio.user == current_user
+      return render json: { error: "Access denied. You can only view your own portfolios." }, status: :forbidden
     end
+
+    render json: @portfolio.as_json(
+      include: {
+        stock: { only: [ :id, :ticker, :company_name, :current_price ] },
+        user: { only: [ :id, :email, :first_name, :last_name ] }
+      },
+      methods: [ :current_market_value ]
+    )
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Portfolio not found" }, status: :not_found
   end
 
   def buy
