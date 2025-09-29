@@ -16,32 +16,45 @@ class Api::V1::PortfoliosController < Api::V1::BaseController
     @portfolio = Portfolio.find(params[:id])
 
     unless current_user.admin? || @portfolio.user == current_user
-      render json: { error: "Access denied. You can only view your own portfolios." }, status: :forbidden
+      render :access_denied, status: :forbidden
     end
   rescue ActiveRecord::RecordNotFound
-    render json: { error: "Portfolio not found" }, status: :not_found
+    render :not_found, status: :not_found
   end
 
   def buy
     stock = Stock.find_by(ticker: params[:ticker])
     return render json: { error: "Stock not found" }, status: :not_found unless stock
 
-    portfolio = Portfolio.find_or_create_for_user_and_stock(current_user, stock)
-    portfolio.add_shares(params[:quantity].to_i)
-    render json: { message: "Shares bought", quantity: portfolio.quantity }
+    begin
+      # Create a Receipt which automatically handles the entire transaction
+      @receipt = Receipt.create!(
+        user: current_user,
+        stock: stock,
+        transaction_type: "buy",
+        quantity: params[:quantity].to_i
+      )
+
+      render :buy
+    rescue StandardError => e
+      render json: { error: e.message }, status: :unprocessable_entity
+    end
   end
 
   def sell
     stock = Stock.find_by(ticker: params[:ticker])
     return render json: { error: "Stock not found" }, status: :not_found unless stock
 
-    portfolio = Portfolio.find_by(user: current_user, stock: stock)
-    return render json: { error: "Portfolio not found" }, status: :not_found unless portfolio
-
     begin
-      destroyed = portfolio.remove_shares(params[:quantity].to_i)
-      msg = destroyed ? "All shares sold, portfolio entry deleted" : "Shares sold"
-      render json: { message: msg }
+      # Create a Receipt which automatically handles the entire transaction
+      @receipt = Receipt.create!(
+        user: current_user,
+        stock: stock,
+        transaction_type: "sell",
+        quantity: params[:quantity].to_i
+      )
+
+      render :sell
     rescue StandardError => e
       render json: { error: e.message }, status: :unprocessable_entity
     end
