@@ -18,7 +18,7 @@ Rails.application.routes.draw do
       end
       resources :receipts, only: [ :index, :show ]
       resources :stock_reviews, only: [ :index, :show ]
-      resources :users, only: [ :index, :show ] do
+      resources :users, only: [ :index, :show, :create, :update, :destroy ] do
         member do
           patch :update_status
         end
