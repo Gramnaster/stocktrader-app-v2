@@ -5,6 +5,7 @@ class Api::V1::WalletsController < Api::V1::BaseController
   end
 
   def show
-    @wallet = Wallet.find(params[:id])
+  @wallet = Wallet.find(params[:id])
+  @user = current_user
   end
 end
