@@ -5,23 +5,10 @@ class Api::V1::PortfoliosController < Api::V1::BaseController
 
   def index
     @portfolios = Portfolio.all.includes(:user, :stock)
-    render json: @portfolios.as_json(
-      include: {
-        user: { only: [ :id, :email, :first_name, :last_name ] },
-        stock: { only: [ :id, :ticker, :company_name, :current_price ] }
-      },
-      methods: [ :current_market_value ]
-    )
   end
 
   def my_portfolios
     @portfolios = current_user.portfolios.includes(:stock)
-    render json: @portfolios.as_json(
-      include: {
-        stock: { only: [ :id, :ticker, :company_name, :current_price ] }
-      },
-      methods: [ :current_market_value ]
-    )
   end
 
   def show
@@ -29,16 +16,8 @@ class Api::V1::PortfoliosController < Api::V1::BaseController
     @portfolio = Portfolio.find(params[:id])
 
     unless current_user.admin? || @portfolio.user == current_user
-      return render json: { error: "Access denied. You can only view your own portfolios." }, status: :forbidden
+      render json: { error: "Access denied. You can only view your own portfolios." }, status: :forbidden
     end
-
-    render json: @portfolio.as_json(
-      include: {
-        stock: { only: [ :id, :ticker, :company_name, :current_price ] },
-        user: { only: [ :id, :email, :first_name, :last_name ] }
-      },
-      methods: [ :current_market_value ]
-    )
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Portfolio not found" }, status: :not_found
   end

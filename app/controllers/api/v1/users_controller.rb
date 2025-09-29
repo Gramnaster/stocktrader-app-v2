@@ -5,19 +5,14 @@ class Api::V1::UsersController < Api::V1::BaseController
 
   def index
     @users = User.all
-    render json: @users.as_json(except: [ :password_digest, :jti ])
   end
 
   def show
-    render json: @user.as_json(except: [ :password_digest, :jti ])
   end
 
   def update_status
     if @user.update(user_status: params[:user_status])
-      render json: {
-        message: "User status updated successfully",
-        user: @user.as_json(only: [ :id, :email, :first_name, :last_name, :user_status ])
-      }
+      render :update_status
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
