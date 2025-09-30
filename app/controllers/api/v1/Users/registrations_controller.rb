@@ -12,6 +12,14 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
 
     resource.save
     if resource.persisted?
+      # Send welcome email to user
+      UserMailer.signup_confirmation(resource).deliver_now
+
+      # Notify admin of new trader registration (only for traders)
+      if resource.trader?
+        UserMailer.admin_new_trader_notification(resource).deliver_now
+      end
+
       # If the user was saved, let Rails render the view at:
       # app/views/api/v1/users/registrations/create.json.jbuilder
       # The JWT will be in the response headers automatically.

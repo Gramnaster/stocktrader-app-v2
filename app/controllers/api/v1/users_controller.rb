@@ -54,7 +54,19 @@ class Api::V1::UsersController < Api::V1::BaseController
   end
 
   def update_status
+    old_status = @user.user_status
+
     if @user.update(user_status: params[:user_status])
+      # Send appropriate email based on status change
+      if old_status != @user.user_status && @user.trader?
+        case @user.user_status
+        when "approved"
+          UserMailer.trader_approval_notification(@user).deliver_now
+        when "rejected"
+          UserMailer.trader_rejection_notification(@user).deliver_now
+        end
+      end
+
       render :update_status
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
