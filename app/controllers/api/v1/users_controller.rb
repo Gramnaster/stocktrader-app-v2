@@ -61,6 +61,11 @@ class Api::V1::UsersController < Api::V1::BaseController
     end
   end
 
+  def pending_traders
+    @users = User.where(user_status: "pending", user_role: "trader").includes(:country, :wallet)
+    render :index
+  end
+
   private
 
   def set_user
