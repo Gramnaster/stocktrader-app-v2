@@ -3,6 +3,10 @@ class ApplicationController < ActionController::API
 
   protected
 
+  def set_default_accept
+    request.format = :json if request.headers["Accept"] =~ /application\/json|text\/plain|\*\/\*/
+  end
+
   # This method tells Devise which custom parameters to allow for sign_up and account_update.
   def configure_permitted_parameters
     # For the :sign_up action (POST /api/v1/signup)

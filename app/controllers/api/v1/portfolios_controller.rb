@@ -26,13 +26,23 @@ class Api::V1::PortfoliosController < Api::V1::BaseController
     stock = Stock.find_by(ticker: params[:ticker])
     return render json: { error: "Stock not found" }, status: :not_found unless stock
 
+    quantity = params[:quantity].to_i
+    current_price = stock.current_price
+    total_amount = quantity * current_price
+
     begin
-      # Create a Receipt which automatically handles the entire transaction
+      # Check wallet balance before creating receipt
+      if current_user.wallet.balance < total_amount
+        return render json: { error: "Insufficient funds: balance is #{current_user.wallet.balance}, need #{total_amount}" }, status: :unprocessable_entity
+      end
+
       @receipt = Receipt.create!(
         user: current_user,
         stock: stock,
         transaction_type: "buy",
-        quantity: params[:quantity].to_i
+        quantity: quantity,
+        price_per_share: current_price,
+        total_amount: total_amount
       )
 
       render :buy
