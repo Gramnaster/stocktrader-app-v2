@@ -20,7 +20,7 @@ json.array! @portfolios do |portfolio|
   json.stock do
     json.id portfolio.stock.id
     json.ticker portfolio.stock.ticker
-    json.company_name portfolio.stock.company_name
+    json.company_name portfolio.stock.name
     json.current_price portfolio.stock.current_price
     json.currency portfolio.stock.currency
   end
