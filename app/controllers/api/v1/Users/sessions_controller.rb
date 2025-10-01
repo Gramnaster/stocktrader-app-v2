@@ -4,8 +4,6 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
   respond_to :json
 
   private
-
-  # Override the default Devise respond_with method for successful login
   def respond_with(resource, _opts = {})
     # The `resource` is the signed-in user.
     # Let Rails render the view at:

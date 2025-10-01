@@ -1,6 +1,24 @@
 class ApplicationController < ActionController::API
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+  def options
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Expose-Headers"] = "Authorization"
+    response.headers["Access-Control-Max-Age"] = "7200"
+    head :ok
+  end
+
+  def preflight
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Expose-Headers"] = "Authorization"
+    response.headers["Access-Control-Max-Age"] = "7200"
+    head :ok
+  end
+
   protected
 
   def set_default_accept
@@ -18,5 +36,4 @@ class ApplicationController < ActionController::API
     # You can also permit parameters for updating an account (:account_update)
     # devise_parameter_sanitizer.permit(:account_update, keys: [:first_name, ...])
   end
-  config.cache_store = :redis_cache_store, { url: ENV.fetch("REDIS_URL") { "redis://localhost:6379/0" } }
 end
