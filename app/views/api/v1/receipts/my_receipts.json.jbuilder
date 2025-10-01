@@ -25,6 +25,7 @@ json.array! @receipts do |receipt|
       json.company_name receipt.stock.name
       json.current_price receipt.stock.current_price
       json.currency receipt.stock.currency
+      json.logo_url receipt.stock.logo_url
     end
   else
     json.stock nil

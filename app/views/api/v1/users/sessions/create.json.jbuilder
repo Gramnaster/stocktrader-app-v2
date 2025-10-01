@@ -64,6 +64,7 @@ json.data do
       json.currency portfolio.stock.currency if portfolio.stock.respond_to?(:currency)
       json.market_cap portfolio.stock.market_cap if portfolio.stock.respond_to?(:market_cap)
       json.sector portfolio.stock.sector if portfolio.stock.respond_to?(:sector)
+      json.logo_url portfolio.stock.logo_url if portfolio.stock.respond_to?(:logo_url)
     end
 
     # Calculate portfolio value for this stock

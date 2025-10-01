@@ -22,4 +22,5 @@ json.stock do
   json.company_name @portfolio.stock.name
   json.current_price @portfolio.stock.current_price
   json.currency @portfolio.stock.currency
+  json.logo_url @portfolio.stock.logo_url
 end

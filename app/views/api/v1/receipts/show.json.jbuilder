@@ -21,4 +21,5 @@ json.stock do
   json.id @receipt.stock.id
   json.ticker @receipt.stock.ticker
   json.company_name @receipt.stock.name
+  json.logo_url @receipt.stock.logo_url
 end
