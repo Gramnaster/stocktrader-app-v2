@@ -12,6 +12,11 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
 
     resource.save
     if resource.persisted?
+      # Send Devise confirmation instructions if confirmable is enabled
+      if resource.class.devise_modules.include?(:confirmable) && !resource.confirmed?
+        resource.send_confirmation_instructions
+      end
+
       # Send welcome email to user
       UserMailer.signup_confirmation(resource).deliver_now
 
