@@ -1,12 +1,15 @@
 class Receipt < ApplicationRecord
   belongs_to :user
-  belongs_to :stock
+  belongs_to :stock, optional: true  # Make stock optional for deposit/withdraw
 
-  enum :transaction_type, { buy: "buy", sell: "sell" }
+  enum :transaction_type, { buy: "buy", sell: "sell", deposit: "deposit", withdraw: "withdraw" }
 
-  validates :quantity, presence: true, numericality: { greater_than: 0 }
-  validates :price_per_share, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :quantity, presence: true, numericality: { greater_than: 0 }, if: -> { buy? || sell? }
+  validates :price_per_share, presence: true, numericality: { greater_than_or_equal_to: 0 }, if: -> { buy? || sell? }
   validates :total_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
+
+  # For deposit/withdraw, we don't need stock, quantity, or price_per_share
+  validates :stock, presence: true, if: -> { buy? || sell? }
 
   after_create :execute_transaction
 
@@ -88,9 +91,39 @@ class Receipt < ApplicationRecord
           total_amount: result[:total_proceeds]
         )
       end
+    when "deposit"
+      result = process_deposit(total_amount)
+    when "withdraw"
+      result = process_withdraw(total_amount)
     end
   rescue StandardError => e
     destroy!
     raise e
+  end
+
+  def process_deposit(amount)
+    new_balance = wallet.deposit(amount)
+    wallet.update!(balance: new_balance)
+
+    {
+      amount: amount,
+      new_balance: new_balance,
+      transaction_type: "deposit"
+    }
+  end
+
+  def process_withdraw(amount)
+    if wallet.balance < amount
+      raise StandardError, "Insufficient funds: balance is #{wallet.balance}, need #{amount}"
+    end
+
+    new_balance = wallet.withdraw(amount)
+    wallet.update!(balance: new_balance)
+
+    {
+      amount: amount,
+      new_balance: new_balance,
+      transaction_type: "withdraw"
+    }
   end
 end

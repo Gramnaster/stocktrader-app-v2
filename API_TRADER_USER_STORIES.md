@@ -218,12 +218,72 @@ Authorization: Bearer <jwt_token>
 - **Returns**: Current wallet balance and user information
 - **Auto-Updated**: Balance changes automatically with buy/sell transactions
 
-#### Story 6.2: Track Wallet History
+#### Story 6.2: Deposit Money
+**As a trader, I want to deposit money into my wallet so that I can have funds available for trading.**
+
+- **Endpoint**: `POST /api/v1/wallets/deposit`
+- **Authentication**: Required (approved users only)
+- **Request Body**:
+```json
+{
+  "amount": 100.00
+}
+```
+- **Response**:
+```json
+{
+  "message": "Deposit successful",
+  "receipt": {
+    "id": 123,
+    "amount": 100.00,
+    "transaction_type": "deposit",
+    "created_at": "2025-10-01T12:00:00Z",
+    "wallet_balance": 150.00
+  }
+}
+```
+- **Features**:
+  - Creates receipt record for tracking
+  - Immediate wallet balance update
+  - Amount validation (positive, max $1,000,000)
+
+#### Story 6.3: Withdraw Money
+**As a trader, I want to withdraw money from my wallet so that I can access my funds.**
+
+- **Endpoint**: `POST /api/v1/wallets/withdraw`
+- **Authentication**: Required (approved users only)
+- **Request Body**:
+```json
+{
+  "amount": 50.00
+}
+```
+- **Response**:
+```json
+{
+  "message": "Withdrawal successful",
+  "receipt": {
+    "id": 124,
+    "amount": 50.00,
+    "transaction_type": "withdraw",
+    "created_at": "2025-10-01T12:05:00Z",
+    "wallet_balance": 100.00
+  }
+}
+```
+- **Features**:
+  - Validates sufficient balance before withdrawal
+  - Creates receipt record for tracking
+  - Immediate wallet balance update
+  - Prevents negative balances
+
+#### Story 6.4: Track Wallet History
 **As a trader, I want to see how my wallet balance changes over time through my transaction history.**
 
-- **Implementation**: Tracked through receipt records
+- **Implementation**: Tracked through receipt records (buy/sell/deposit/withdraw)
 - **Each Receipt Shows**: Updated wallet balance after transaction
-- **Real-time Updates**: Balance immediately reflects in buy/sell responses
+- **Transaction Types**: `buy`, `sell`, `deposit`, `withdraw`
+- **Real-time Updates**: Balance immediately reflects in all transaction responses
 
 ### 7. Market Data Access
 
@@ -310,6 +370,13 @@ Authorization: Bearer <jwt_token>
 - **Unique Constraints**: One portfolio per user-stock combination
 - **Foreign Key Constraints**: All references must exist
 
+### Wallet Transaction Rules
+- **Deposit Limits**: Maximum deposit amount of $1,000,000
+- **Positive Amounts**: All deposits and withdrawals must be positive
+- **Balance Validation**: Withdrawals require sufficient wallet balance
+- **Receipt Tracking**: All wallet transactions create receipt records
+- **Immediate Updates**: Wallet balance updates immediately after transactions
+
 ---
 
 ## Frontend Integration Examples
@@ -354,6 +421,36 @@ const sellStock = async (ticker, quantity) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ ticker, quantity })
+  });
+  return response.json();
+};
+```
+
+#### Deposit Money
+```javascript
+const depositMoney = async (amount) => {
+  const response = await fetch('/api/v1/wallets/deposit', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ amount })
+  });
+  return response.json();
+};
+```
+
+#### Withdraw Money
+```javascript
+const withdrawMoney = async (amount) => {
+  const response = await fetch('/api/v1/wallets/withdraw', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ amount })
   });
   return response.json();
 };

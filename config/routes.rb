@@ -22,7 +22,10 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :stocks, only: [ :index, :show ]
       resources :countries, only: [ :index, :show ]
-      resources :wallets, only: [ :index, :show ]
+      resources :wallets, only: [ :index, :show ] do
+        post :deposit, on: :collection
+        post :withdraw, on: :collection
+      end
       resources :historical_prices, only: [ :index, :show ]
       resources :portfolios, only: [ :index, :show ] do
         get :my_portfolios, on: :collection
