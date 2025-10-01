@@ -22,7 +22,7 @@ json.array! @receipts do |receipt|
     json.stock do
       json.id receipt.stock.id
       json.ticker receipt.stock.ticker
-      json.company_name receipt.stock.company_name
+      json.company_name receipt.stock.name
       json.current_price receipt.stock.current_price
       json.currency receipt.stock.currency
     end
