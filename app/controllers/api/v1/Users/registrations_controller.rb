@@ -5,8 +5,6 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_account_update_params, only: [:update]
 
   respond_to :json
-
-  # Override the default Devise create action
   def create
     build_resource(sign_up_params)
 

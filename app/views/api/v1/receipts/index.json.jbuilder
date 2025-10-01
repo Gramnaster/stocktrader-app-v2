@@ -17,11 +17,17 @@ json.array! @receipts do |receipt|
     json.last_name receipt.user.last_name
   end
 
-  # Stock details
-  json.stock do
-    json.id receipt.stock.id
-    json.ticker receipt.stock.ticker
-    json.company_name receipt.stock.name
-    json.logo_url receipt.stock.logo_url
+  # Stock details (if exists - null for deposit/withdraw)
+  if receipt.stock
+    json.stock do
+      json.id receipt.stock.id
+      json.ticker receipt.stock.ticker
+      json.company_name receipt.stock.name
+      json.current_price receipt.stock.current_price
+      json.currency receipt.stock.currency
+      json.logo_url receipt.stock.logo_url
+    end
+  else
+    json.stock nil
   end
 end

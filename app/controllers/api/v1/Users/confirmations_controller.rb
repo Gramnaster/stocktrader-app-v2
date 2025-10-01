@@ -2,14 +2,9 @@
 
 class Api::V1::Users::ConfirmationsController < Devise::ConfirmationsController
   respond_to :json
-
-  # Ensure we don't require authentication for confirmation
   skip_before_action :authenticate_user!, raise: false
-
-  # Set the correct Devise mapping
   before_action :set_devise_mapping
 
-  # Override show to handle confirmation tokens properly
   def show
     self.resource = resource_class.confirm_by_token(params[:confirmation_token])
     yield resource if block_given?
