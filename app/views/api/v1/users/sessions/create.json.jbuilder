@@ -58,7 +58,7 @@ json.data do
     # Stock information for each portfolio
     json.stock do
       json.id portfolio.stock.id
-      json.symbol portfolio.stock.symbol
+      json.ticker portfolio.stock.ticker
       json.company_name portfolio.stock.company_name
       json.current_price portfolio.stock.current_price
       json.currency portfolio.stock.currency if portfolio.stock.respond_to?(:currency)
