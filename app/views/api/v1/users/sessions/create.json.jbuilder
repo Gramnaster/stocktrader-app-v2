@@ -47,6 +47,37 @@ json.data do
   json.updated_at resource.updated_at
   json.remember_created_at resource.remember_created_at
 
+  # Portfolios information
+  json.portfolios resource.portfolios.includes(:stock) do |portfolio|
+    json.user_id portfolio.user_id
+    json.stock_id portfolio.stock_id
+    json.quantity portfolio.quantity
+    json.created_at portfolio.created_at
+    json.updated_at portfolio.updated_at
+
+    # Stock information for each portfolio
+    json.stock do
+      json.id portfolio.stock.id
+      json.symbol portfolio.stock.symbol
+      json.company_name portfolio.stock.company_name
+      json.current_price portfolio.stock.current_price
+      json.currency portfolio.stock.currency if portfolio.stock.respond_to?(:currency)
+      json.market_cap portfolio.stock.market_cap if portfolio.stock.respond_to?(:market_cap)
+      json.sector portfolio.stock.sector if portfolio.stock.respond_to?(:sector)
+    end
+
+    # Calculate portfolio value for this stock
+    json.portfolio_value (portfolio.quantity * portfolio.stock.current_price).round(2)
+  end
+
+  # Portfolio summary
+  total_portfolio_value = resource.portfolios.includes(:stock).sum { |p| p.quantity * p.stock.current_price }
+  json.portfolio_summary do
+    json.total_stocks resource.portfolios.count
+    json.total_portfolio_value total_portfolio_value.round(2)
+    json.total_shares resource.portfolios.sum(:quantity)
+  end
+
   # JWT token identifier
   json.jti resource.jti
 end
