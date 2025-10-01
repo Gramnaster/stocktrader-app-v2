@@ -3,11 +3,30 @@ class Api::V1::WalletsController < Api::V1::BaseController
   before_action :require_approved_user, only: [ :deposit, :withdraw ]
 
   def index
-    @wallets = Wallet.all
+    # Admins can see all wallets, users can only see their own
+    if current_user.admin?
+      @wallets = Wallet.all.includes(:user)
+    else
+      @wallets = [ current_user.wallet ]
+    end
   end
 
   def show
-    @wallet = Wallet.find(params[:id])
+    # Users can only access their own wallet
+    if current_user.admin?
+      @wallet = Wallet.find(params[:id])
+      @user = @wallet.user
+    else
+      # Ignore the :id param and always return user's own wallet
+      @wallet = current_user.wallet
+      @user = current_user
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Wallet not found" }, status: :not_found
+  end
+
+  def my_wallet
+    @wallet = current_user.wallet
     @user = current_user
   end
 

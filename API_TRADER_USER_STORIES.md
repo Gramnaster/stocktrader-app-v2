@@ -214,9 +214,13 @@ Authorization: Bearer <jwt_token>
 #### Story 6.1: View Wallet Balance
 **As a trader, I want to see my current wallet balance so that I know how much I can invest.**
 
-- **Endpoint**: `GET /api/v1/wallets/:id`
+- **Endpoint**: `GET /api/v1/wallets/:id` (Admin users only - can view any wallet)
+- **Endpoint**: `GET /api/v1/wallets/my_wallet` (Recommended for regular users)
+- **Security**: Users can only access their own wallet data
 - **Returns**: Current wallet balance and user information
 - **Auto-Updated**: Balance changes automatically with buy/sell transactions
+
+**For regular users, accessing any wallet ID will return their own wallet for security.**
 
 #### Story 6.2: Deposit Money
 **As a trader, I want to deposit money into my wallet so that I can have funds available for trading.**

@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       resources :stocks, only: [ :index, :show ]
       resources :countries, only: [ :index, :show ]
       resources :wallets, only: [ :index, :show ] do
+        get :my_wallet, on: :collection
         post :deposit, on: :collection
         post :withdraw, on: :collection
       end
