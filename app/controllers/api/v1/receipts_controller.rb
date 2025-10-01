@@ -14,6 +14,10 @@ class Api::V1::ReceiptsController < Api::V1::BaseController
     end
   end
 
+  def my_receipts
+    @receipts = current_user.receipts.includes(:stock).order(created_at: :desc)
+  end
+
   private
 
   def set_receipt

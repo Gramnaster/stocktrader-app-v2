@@ -198,9 +198,11 @@ Authorization: Bearer <jwt_token>
 #### Story 5.1: View My Transaction History
 **As a trader, I want to see all my past transactions so that I can track my trading activity.**
 
-- **Endpoint**: `GET /api/v1/receipts` (filtered to user's transactions)
+- **Endpoint**: `GET /api/v1/receipts/my_receipts` (Recommended for regular users)
+- **Endpoint**: `GET /api/v1/receipts` (Admin users only - can view all receipts)
 - **Authorization**: Users see only their own receipts
-- **Returns**: All buy/sell transactions with complete details
+- **Returns**: All buy/sell/deposit/withdraw transactions with complete details
+- **Ordering**: Newest transactions first
 
 #### Story 5.2: View Transaction Details
 **As a trader, I want to see details of a specific transaction for my records.**
@@ -464,6 +466,19 @@ const withdrawMoney = async (amount) => {
 ```javascript
 const getWalletBalance = async (walletId) => {
   const response = await fetch(`/api/v1/wallets/${walletId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  return response.json();
+};
+```
+
+#### Get My Transaction History
+```javascript
+const getMyReceipts = async () => {
+  const response = await fetch('/api/v1/receipts/my_receipts', {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'

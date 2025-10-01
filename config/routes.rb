@@ -33,7 +33,9 @@ Rails.application.routes.draw do
         post :buy, on: :collection
         post :sell, on: :collection
       end
-      resources :receipts, only: [ :index, :show ]
+      resources :receipts, only: [ :index, :show ] do
+        get :my_receipts, on: :collection
+      end
       resources :stock_reviews, only: [ :index, :show ]
       resources :users, only: [ :index, :show, :create, :update, :destroy ], except: [] do
         collection do
