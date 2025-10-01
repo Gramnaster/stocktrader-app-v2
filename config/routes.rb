@@ -6,6 +6,18 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Devise routes - must come BEFORE namespace :api to avoid conflicts
+  devise_for :users, path: "api/v1/users", path_names: {
+    sign_in: "login",
+    sign_out: "logout",
+    registration: "signup"
+  },
+  controllers: {
+    sessions: "api/v1/users/sessions",
+    registrations: "api/v1/users/registrations",
+    confirmations: "api/v1/users/confirmations"
+  }
+
   namespace :api do
     namespace :v1 do
       resources :stocks, only: [ :index, :show ]
@@ -19,7 +31,7 @@ Rails.application.routes.draw do
       end
       resources :receipts, only: [ :index, :show ]
       resources :stock_reviews, only: [ :index, :show ]
-      resources :users, only: [ :index, :show, :create, :update, :destroy ] do
+      resources :users, only: [ :index, :show, :create, :update, :destroy ], except: [] do
         collection do
           get :pending_traders
         end
@@ -29,16 +41,6 @@ Rails.application.routes.draw do
       end
     end
   end
-
-  devise_for :users, path: "api/v1/users", path_names: {
-    sign_in: "login",
-    sign_out: "logout",
-    registration: "signup"
-  },
-  controllers: {
-    sessions: "api/v1/users/sessions",
-    registrations: "api/v1/users/registrations"
-  }
 
   # Defines the root path route ("/")
   # root "posts#index"
