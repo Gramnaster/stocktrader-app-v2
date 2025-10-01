@@ -1,4 +1,5 @@
 class Api::V1::WalletsController < Api::V1::BaseController
+  include AdminAuthorization
   before_action :authenticate_user!
   before_action :require_approved_user, only: [ :deposit, :withdraw ]
 
