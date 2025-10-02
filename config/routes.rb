@@ -36,6 +36,7 @@ Rails.application.routes.draw do
       resources :receipts, only: [ :index, :show ] do
         get :my_receipts, on: :collection
       end
+  get "receipts/user/:id", to: "receipts#user_receipts"
       resources :stock_reviews, only: [ :index, :show ]
       resources :users, only: [ :index, :show, :create, :update, :destroy ], except: [] do
         collection do
