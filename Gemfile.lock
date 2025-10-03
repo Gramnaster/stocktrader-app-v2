@@ -136,7 +136,7 @@ GEM
     ffi (1.17.2-arm-linux-musl)
     ffi (1.17.2-x86_64-linux-gnu)
     ffi (1.17.2-x86_64-linux-musl)
-    finnhub_ruby (2.0.1)
+    finnhub_ruby (2.0.3)
       json (~> 2.3)
     fugit (1.11.2)
       et-orbi (~> 1, >= 1.2.11)
@@ -156,7 +156,7 @@ GEM
     jbuilder (2.14.1)
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
-    json (2.13.2)
+    json (2.15.0)
     jwt (3.1.2)
       base64
     kamal (2.7.0)
@@ -412,7 +412,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails
   faker
-  finnhub_ruby (~> 2.0.0)
+  finnhub_ruby (~> 2.0.3)
   image_processing (~> 1.2)
   jbuilder
   kamal
