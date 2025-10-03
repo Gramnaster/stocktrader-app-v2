@@ -5,7 +5,7 @@ class UserMailer < ApplicationMailer
 
     mail(
       to: @user.email,
-      subject: "🎉 Your Trader Account Has Been Approved!"
+      subject: "Your Trader Account Has Been Approved!"
     )
   end
 
