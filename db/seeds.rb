@@ -46,8 +46,8 @@ end
 puts "Creating default admin user..."
 
 # Create default admin user (after countries are seeded)
-admin_email = ENV['ADMIN_EMAIL'] || 'admin@admin.com'
-admin_password = ENV['ADMIN_PASSWORD'] || 'admin123456'
+admin_email = ENV['ADMIN_EMAIL']
+admin_password = ENV['ADMIN_PASSWORD']
 
 # Get the first country (or default to US)
 default_country = Country.find_by(code: 'US') || Country.first
