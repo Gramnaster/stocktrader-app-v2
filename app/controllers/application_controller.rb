@@ -19,8 +19,8 @@ class ApplicationController < ActionController::API
     head :ok
   end
 
-  UpdateDailyClosingPricesJob.perform_later
-  UpdateDailyMarketCapJob.perform_later
+  # UpdateDailyClosingPricesJob.perform_later
+  # UpdateDailyMarketCapJob.perform_later
   UpdateStockPricesJob.perform_later
 
   protected
