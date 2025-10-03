@@ -3,7 +3,7 @@
 # about methods provided by the DSL, see https://puma.io/puma/Puma/DSL.html.
 
 # Specifies the number of threads that each worker process will use.
-threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
+threads_count = ENV.fetch("RAILS_MAX_THREADS", 8)
 threads threads_count, threads_count
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
