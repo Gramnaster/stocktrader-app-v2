@@ -23,7 +23,7 @@ class UpdateStockPricesJob < ApplicationJob
           FinnhubClient.try_request do |client|
             result = client.quote(stock.ticker)
           end
-          sleep(0.25) # Stay under the 60 calls/minute rate limit.
+          sleep(1.1) # Stay under the 60 calls/minute rate limit.
           result
         end
         # If there was a "cache hit", the code above instantly returns the cached value
