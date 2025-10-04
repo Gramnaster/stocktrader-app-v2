@@ -50,5 +50,5 @@ Rails.application.routes.draw do
   end
 
   # Defines the root path route ("/")
-  root "countries#index"
+  root "api/v1/countries#index"
 end
