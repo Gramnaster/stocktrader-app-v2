@@ -34,15 +34,19 @@ port ENV.fetch("PORT", 3001)
 plugin :tmp_restart
 
 # Run the Solid Queue supervisor inside of Puma for single-server deployments
-plugin :solid_queue
+if defined?(Rails) && (ENV["SOLID_QUEUE_IN_PUMA"] || Rails.env.development?)
+  Puma.plugin :solid_queue
+end
 
 # Specify the PID file. Defaults to tmp/pids/server.pid in development.
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 
-after_booted do
-  Rails.application.config.after_initialize do
-    UpdateDailyClosingPricesJob.perform_later
-    # UpdateDailyMarketCapJob.perform_now
+if defined?(Rails)
+  after_booted do
+    Rails.application.config.after_initialize do
+      UpdateDailyClosingPricesJob.perform_later
+      # UpdateDailyMarketCapJob.perform_now
+    end
   end
 end
