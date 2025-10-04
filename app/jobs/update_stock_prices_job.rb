@@ -8,17 +8,17 @@ class UpdateStockPricesJob < ApplicationJob
   def perform
     redis = Redis.new
     if redis.get("update_daily_closing_prices_job_running")
-      p "Skipping UpdateStockPricesJob because UpdateDailyClosingPricesJob is running"
+      Rails.logger.debug "Skipping UpdateStockPricesJob because UpdateDailyClosingPricesJob is running"
       return
     end
 
-    puts "Starting stock price update job..."
+    Rails.logger.debug "Starting stock price update job..."
 
     Stock.find_each do |stock|
       begin
         # `Rails.cache.fetch` will first try to find a result in Redis with the given key.
         quote = Rails.cache.fetch("stock-quote-#{stock.ticker}", expires_in: 60.seconds) do
-          puts "CACHE MISS: Fetching fresh quote for #{stock.ticker} from Finnhub API."
+          Rails.logger.debug "CACHE MISS: Fetching fresh quote for #{stock.ticker} from Finnhub API."
           result = nil
           FinnhubClient.try_request do |client|
             result = client.quote(stock.ticker)
@@ -40,6 +40,6 @@ class UpdateStockPricesJob < ApplicationJob
         next
       end
     end
-    puts "Finished stock price update job."
+    Rails.logger.debug "Finished stock price update job."
   end
 end

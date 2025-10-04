@@ -9,7 +9,7 @@ class UpdateDailyClosingPricesJob < ApplicationJob
     redis = Redis.new
     begin
       redis.set("update_daily_closing_prices_job_running", true)
-      puts "Starting update daily closing prices job..."
+      Rails.logger.debug "Starting update daily closing prices job..."
       target_date = Date.yesterday
 
         Stock.find_each do |stock|
@@ -17,7 +17,7 @@ class UpdateDailyClosingPricesJob < ApplicationJob
             quote = client.quote(stock.ticker)
             price_record = stock.historical_prices.find_or_initialize_by(date: target_date)
             price_record.update!(previous_close: quote["pc"])
-            puts "Successfully saved closing price for #{stock.ticker} on #{target_date}"
+            Rails.logger.debug "Successfully saved closing price for #{stock.ticker} on #{target_date}"
           end
           sleep(0.5)
         end
