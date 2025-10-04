@@ -22,6 +22,9 @@ class ApplicationController < ActionController::API
   # UpdateDailyClosingPricesJob.perform_later
   # UpdateDailyMarketCapJob.perform_later
   UpdateStockPricesJob.perform_later
+  def health_check
+    render json: { status: "API is running" }, status: :ok
+  end
 
   protected
 
