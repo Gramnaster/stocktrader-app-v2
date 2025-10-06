@@ -8,19 +8,22 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
   def create
     build_resource(sign_up_params)
 
+    # Skip Devise's automatic confirmation email (we'll send it async instead)
+    resource.skip_confirmation_notification!
+
     resource.save
     if resource.persisted?
-      # Send Devise confirmation instructions if confirmable is enabled
+      # Send Devise confirmation instructions asynchronously if confirmable is enabled
       if resource.class.devise_modules.include?(:confirmable) && !resource.confirmed?
-        resource.send_confirmation_instructions
+        resource.send_confirmation_instructions_async
       end
 
-      # Send welcome email to user
-      UserMailer.signup_confirmation(resource).deliver_now
+      # Send welcome email to user asynchronously
+      UserMailer.signup_confirmation(resource).deliver_later
 
-      # Notify admin of new trader registration (only for traders)
+      # Notify admin of new trader registration (only for traders) asynchronously
       if resource.trader?
-        UserMailer.admin_new_trader_notification(resource).deliver_now
+        UserMailer.admin_new_trader_notification(resource).deliver_later
       end
 
       # If the user was saved, let Rails render the view at:
