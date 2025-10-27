@@ -13,7 +13,7 @@ gem "devise"
 gem "devise-jwt"
 gem "dotenv-rails"
 gem "finnhub_ruby", "~> 2.0.3"
-gem "acts_as_paranoid", "~> 0.10.3"
+gem "acts_as_paranoid", "~> 0.11.0"
 gem "rack-cors"
 gem "redis"
 
